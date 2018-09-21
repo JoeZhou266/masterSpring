@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!--define the class deal with business-->
+    <bean id="waiterTarget" class="com.zjg.Waiter"/>
+    <bean id="sellerTarget" class="com.zjg.Seller"/>
+
+    <!--define the Advice, this class implements MethodBeforeAdvice-->
+    <bean id="greetingAdvice" class="com.zjg.GreetingBeforeAdvice"/>
+    <!--define the Advisor, and connect advice, this class
+    extends StaticMethodMatcherPointcutAdvisor, and try to match method name
+    "greetTo"-->
+    <bean id="greetingAdvisor" class="com.zjg.GreetingAdvisor" p:advice-ref="greetingAdvice"/>
+
+    <!--define the ProxyFactoryBean,and weave all class-->
+    <bean id="parent" abstract="true" class="org.springframework.aop.framework.ProxyFactoryBean"
+          p:interceptorNames="greetingAdvisor"
+          p:proxyTargetClass="true"/>
+    <!--define the abstract parent bean, define parent bean property-->
+    <bean id="waiter" parent="parent" p:target-ref="waiterTarget"/>
+    <bean id="seller" parent="parent" p:target-ref="sellerTarget"/>
+</beans>

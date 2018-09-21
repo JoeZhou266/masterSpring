@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+    <beans xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:p="http://www.springframework.org/schema/p"
+           xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <bean id="waiterTarget" class="com.zjg.NaiveWaiter"/>
+    <bean id="greetingAdvice" class="com.zjg.GreetingBeforeAdvice"/>
+    <bean id="controlFlowPointcut" class="org.springframework.aop.support.ControlFlowPointcut">
+    <constructor-arg type="java.lang.Class" value="com.zjg.WaiterDelegate"/>
+    <constructor-arg type="java.lang.String" value="service"/>
+    </bean>
+
+    <bean id="controllFlowAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor"
+          p:pointcut-ref="controlFlowPointcut"
+          p:advice-ref="greetingAdvice"/>
+
+    <bean id="waiter" class="org.springframework.aop.framework.ProxyFactoryBean"
+          p:target-ref="waiterTarget"
+          p:interceptorNames="controllFlowAdvisor"
+          p:proxyTargetClass="true">
+    </bean>
+</beans>
